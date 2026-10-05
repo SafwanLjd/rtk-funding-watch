@@ -12,7 +12,7 @@ import datetime as dt
 import hashlib
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 __all__ = [
     "ChangeEvent",
@@ -95,16 +95,18 @@ class FundingCall(BaseModel):
     )
 
     def content_hash(self) -> str:
-        """Deterministic 16-hex-char digest over the semantic fields.
+        """Deterministic 16-hex-char digest over the call's identity fields.
 
-        URL lists are sorted so ordering changes do not register as edits.
+        Only the stable, human-meaningful fields in ``_HASHED_FIELDS`` are
+        hashed. The regulation/document/image URL lists are deliberately
+        excluded: they churn with transient detail-page fetch failures and
+        with the snapshot-relative boilerplate threshold, which would
+        otherwise surface as spurious "modified" events in the watchdog.
         """
         parts: list[str] = []
         for name in _HASHED_FIELDS:
             value = getattr(self, name)
             parts.append(value.value if isinstance(value, Status) else str(value))
-        for urls in (self.regulation_urls, self.document_links, self.image_urls):
-            parts.append("\u001f".join(sorted(urls)))
         blob = "\u001e".join(parts).encode("utf-8")
         return hashlib.sha256(blob).hexdigest()[:16]
 
@@ -117,6 +119,15 @@ class Snapshot(BaseModel):
     source_url: str
     scraped_at: dt.datetime
     generator: str = "rtk-funding-watch"
+
+    @field_validator("scraped_at")
+    @classmethod
+    def _as_utc(cls, value: dt.datetime) -> dt.datetime:
+        """Normalize to timezone-aware UTC so filenames and feeds are stable."""
+        if value.tzinfo is None:
+            return value.replace(tzinfo=dt.UTC)
+        return value.astimezone(dt.UTC)
+
     calls: list[FundingCall] = Field(default_factory=list)
     common_resources: list[str] = Field(
         default_factory=list,
