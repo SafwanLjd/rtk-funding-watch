@@ -71,10 +71,10 @@ Each module has one job and depends only on `models.py` plus its own concern.
 
 3. **Diff.** `watchdog.diff_snapshots(prev, new)` matches calls by `id` and
    emits `added`, `removed`, `status_changed`, and `modified` events. Edits are
-   detected by `FundingCall.content_hash()` over the semantic fields, so a
-   reordered URL list or a changed scrape timestamp does not register as a
-   change. Events are ordered: added, status-changed, modified, removed, then by
-   name.
+   detected by `FundingCall.content_hash()` over the identity fields only, so a
+   changed scrape timestamp or churn in the (excluded) URL lists does not
+   register as a change. Events are ordered: added, status-changed, modified,
+   removed, then by name.
 
 4. **Serialize.** `serialize.serialize(snapshot, fmt, diff=diff)` renders each
    format. JSON and CSV carry the calls; TOON adds a `counts` block and a
@@ -95,8 +95,9 @@ The model lives in `models.py` and is the single contract every other module
 reads and writes.
 
 - **`FundingCall`**: one funding measure / application round. `content_hash()`
-  is a 16-hex-char digest over its semantic fields (name, status, period, target
-  group, purpose, domain, funding source, and the sorted URL lists), used by the
+  is a 16-hex-char digest over its identity fields (name, status, period, target
+  group, purpose, domain, funding source); the regulation/document/image URL
+  lists are excluded so link churn is not mistaken for an edit. It is used by the
   differ to detect edits.
 - **`Snapshot`**: a full scrape at a point in time: `source_url`, `scraped_at`,
   `generator`, `calls`, and `common_resources`. `by_id()` indexes the calls;

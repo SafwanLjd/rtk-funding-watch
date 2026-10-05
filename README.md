@@ -68,9 +68,11 @@ Saved snapshot data/snapshots/snapshot-20261005T120000Z.json (2 calls)
   total          2
 ```
 
-Use `-v` / `--verbose` for info-level logging. Every command takes
-`--data-dir` (snapshot store, default `data/snapshots`); the export, build-site,
-and run commands take `--out` (output root, default `site`).
+`--verbose` / `-v` is a global option and must come **before** the subcommand,
+e.g. `rtk-watch -v scrape`. Every command except `mcp` takes `--data-dir`
+(snapshot store, default `data/snapshots`); `mcp` instead takes `--snapshot PATH`.
+The export, build-site, and run commands take `--out` (output root, default
+`site`), and scrape/run take `--keep N` (snapshots to retain, default 90).
 
 ## Commands
 
@@ -217,8 +219,10 @@ matched by its stable `id` (a slug from its detail URL). The differ emits:
 - `removed`: a call that disappeared from the listing.
 - `status_changed`: the same call, different status (e.g. `upcoming` → `open`).
 - `modified`: same status, but a tracked field changed. Edits are detected by
-  a content hash over the call's semantic fields, so reordering a URL list or a
-  volatile scrape timestamp never registers as a change.
+  a content hash over the call's identity fields (name, status, period, target
+  group, purpose, domain, funding source). The regulation/document/image URL
+  lists are excluded, so transient detail-fetch failures or shifts
+  in the shared-document threshold do not register as a change.
 
 Those change events drive the RSS feed and the "recent changes" section of the
 static site. See [docs/architecture.md](docs/architecture.md) for the full
