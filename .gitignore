@@ -1,0 +1,50 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# ---- Testing / typing / linting caches ----
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.cache/
+
+# ---- uv / virtualenvs ----
+.venv/
+venv/
+env/
+# NOTE: uv.lock is committed on purpose (reproducible installs) — do NOT ignore it.
+
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- Generated watchdog site (built & deployed from CI) ----
+/site/
+
+# ---- LibreOffice / editor lock & cruft ----
+.~lock.*#
+.idea/
+.vscode/
+*.swp
+
+# ---- OS cruft ----
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
+
+# User working file (duplicated as reference in data/seed/)
+/rtk_funding_calls.csv
