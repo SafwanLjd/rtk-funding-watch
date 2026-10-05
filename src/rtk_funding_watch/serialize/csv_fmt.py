@@ -7,6 +7,17 @@ import io
 
 from rtk_funding_watch.models import Diff, Snapshot
 
+# Leading characters a spreadsheet may treat as a formula (CSV-injection, OWASP).
+_FORMULA_TRIGGERS = ("=", "+", "-", "@", "\t", "\r")
+
+
+def _neutralize(value: str) -> str:
+    """Prefix a cell with an apostrophe if it could be read as a formula."""
+    if value and value[0] in _FORMULA_TRIGGERS:
+        return "'" + value
+    return value
+
+
 FIELDS = (
     "id",
     "status",
@@ -36,5 +47,7 @@ def dumps(snapshot: Snapshot, *, diff: Diff | None = None) -> str:
         row = call.model_dump(mode="json")
         for key in ("regulation_urls", "document_links", "image_urls"):
             row[key] = ";".join(row[key])
-        writer.writerow({field: row.get(field, "") for field in FIELDS})
+        writer.writerow(
+            {field: _neutralize(str(row.get(field, "") or "")) for field in FIELDS}
+        )
     return buf.getvalue()
