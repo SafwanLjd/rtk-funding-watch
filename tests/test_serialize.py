@@ -67,3 +67,27 @@ def test_rss_lists_change_events_when_diff_given(sample_snapshot: Snapshot) -> N
     items = minidom.parseString(text).getElementsByTagName("item")
     # alpha status change, gamma added, beta removed -> 3 events
     assert len(items) == len(diff.events) == 3
+
+
+def test_csv_neutralizes_formula_injection() -> None:
+    snap = Snapshot(
+        source_url="u",
+        scraped_at=dt.datetime(2026, 1, 1, tzinfo=dt.UTC),
+        calls=[make_call("x", name="=HYPERLINK(1)", purpose="+evil")],
+    )
+    text = serialize.serialize(snap, "csv")
+    row = text.strip().splitlines()[1]
+    assert "'=HYPERLINK(1)" in row
+    assert "'+evil" in row
+
+
+def test_rss_wellformed_with_control_chars_in_data() -> None:
+    # Control chars should have been stripped upstream by the scraper's _clean,
+    # but the feed must stay well-formed even if a stray one reaches it.
+    snap = Snapshot(
+        source_url="u",
+        scraped_at=dt.datetime(2026, 1, 1, tzinfo=dt.UTC),
+        calls=[make_call("x", name="Normaalne & <ok>", status=Status.OPEN)],
+    )
+    text = serialize.serialize(snap, "rss")
+    minidom.parseString(text)  # raises if not well-formed

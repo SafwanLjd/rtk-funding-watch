@@ -10,6 +10,7 @@ import respx
 from rtk_funding_watch.models import Status
 from rtk_funding_watch.scraper import (
     ScraperConfig,
+    _clean,
     _dedupe_ids,
     _drop_boilerplate,
     parse_detail,
@@ -83,14 +84,63 @@ def test_drop_boilerplate_moves_common_docs() -> None:
     assert all(common not in c.document_links for c in calls)
 
 
-def test_dedupe_ids_disambiguates_same_slug() -> None:
-    a = make_call("dup", purpose="one")
-    b = make_call("dup", purpose="two")
-    a.detail_url = b.detail_url = "https://rtk.ee/dup"
+def test_dedupe_ids_disambiguates_rounds_by_period() -> None:
+    a = make_call("dup", application_period="alates 01.01.2026")
+    b = make_call("dup", application_period="alates 01.06.2026")
     result = _dedupe_ids([a, b])
     ids = {c.id for c in result}
     assert len(ids) == 2
-    assert all(i.startswith("dup") for i in ids)
+    assert all(i.startswith("dup-") for i in ids)
+
+
+def test_dedupe_ids_stable_across_content_edits() -> None:
+    # Two rounds of the same slug; editing one round's purpose must not change ids.
+    def pair(purpose: str) -> list:  # type: ignore[type-arg]
+        return [
+            make_call("dup", application_period="alates 01.01.2026", purpose=purpose),
+            make_call("dup", application_period="alates 01.06.2026"),
+        ]
+
+    before = {c.id for c in _dedupe_ids(pair("old"))}
+    after = {c.id for c in _dedupe_ids(pair("new"))}
+    assert before == after
+
+
+def test_parse_period_recovers_both_dates_without_alates() -> None:
+    start, end, _ = parse_period("Taotlusvoor on avatud 01.09.2025 kuni 30.09.2025")
+    assert start == dt.date(2025, 9, 1)
+    assert end == dt.date(2025, 9, 30)
+
+
+def test_parse_period_handles_endash_range() -> None:
+    start, end, _ = parse_period("01.09.2025 - 30.09.2025")
+    assert start == dt.date(2025, 9, 1)
+    assert end == dt.date(2025, 9, 30)
+
+
+def test_parse_listing_drops_unsafe_and_offsite_links() -> None:
+    html = (
+        '<a name="Avatud_taotlusvoorud"></a><strong>AVATUD</strong>'
+        '<p><a class="btn btn-secondary" href="javascript:alert(1)">Evil</a></p>'
+        '<p><a class="btn btn-secondary" href="https://evil.example/x">Offsite</a></p>'
+        '<p><a class="btn btn-secondary" href="https://rtk.ee/good">Good</a></p>'
+    )
+    calls = parse_listing(html)
+    assert [c.id for c in calls] == ["good"]
+
+
+def test_parse_detail_rejects_foreign_schemes() -> None:
+    html = (
+        '<a href="javascript:alert(1)">x</a>'
+        '<a href="https://www.riigiteataja.ee/akt/1">reg</a>'
+        '<a href="https://evil.example/riigiteataja.ee/fake">spoof</a>'
+    )
+    data = parse_detail(html, "https://rtk.ee/x")
+    assert data["regulations"] == ["https://www.riigiteataja.ee/akt/1"]
+
+
+def test_clean_strips_control_characters() -> None:
+    assert _clean("bad\x01name\x1f!") == "badname!"
 
 
 def test_scrape_end_to_end_mocked(listing_html: str, detail_html: str) -> None:
