@@ -48,3 +48,6 @@ desktop.ini
 
 # User working file (duplicated as reference in data/seed/)
 /rtk_funding_calls.csv
+
+# Local project-context file with personal contact data — keep out of the public repo
+/CLAUDE.md
