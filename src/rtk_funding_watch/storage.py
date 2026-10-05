@@ -1,17 +1,29 @@
-"""Persist and load :class:`Snapshot` objects as timestamped JSON files."""
+"""Persist and load :class:`Snapshot` objects as timestamped JSON files.
+
+Writes are atomic (temp file + ``os.replace``) so an interrupted run cannot
+leave a torn ``latest.json`` behind, and the latest/previous readers skip any
+file that fails to parse rather than crashing the whole command.
+"""
 
 from __future__ import annotations
 
 import datetime as dt
+import logging
+import os
+import tempfile
+from collections.abc import Iterator
 from pathlib import Path
 
 from rtk_funding_watch.models import Snapshot
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "latest_snapshot",
     "list_snapshots",
     "load_snapshot",
     "previous_snapshot",
+    "prune_snapshots",
     "save_snapshot",
     "snapshot_filename",
 ]
@@ -23,14 +35,33 @@ def snapshot_filename(snapshot: Snapshot) -> str:
     return f"snapshot-{ts}.json"
 
 
-def save_snapshot(snapshot: Snapshot, directory: Path | str) -> Path:
-    """Write ``snapshot`` into ``directory`` and refresh the ``latest.json`` copy."""
+def _atomic_write(path: Path, text: str) -> None:
+    """Write ``text`` to ``path`` atomically (temp file in the same dir + replace)."""
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=".tmp-", suffix=".json")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(text)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+
+def save_snapshot(snapshot: Snapshot, directory: Path | str, *, keep: int = 0) -> Path:
+    """Write ``snapshot`` atomically and refresh ``latest.json``.
+
+    ``keep`` > 0 prunes all but the newest ``keep`` timestamped snapshots.
+    """
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     payload = snapshot.model_dump_json(indent=2) + "\n"
     path = directory / snapshot_filename(snapshot)
-    path.write_text(payload, encoding="utf-8")
-    (directory / "latest.json").write_text(payload, encoding="utf-8")
+    _atomic_write(path, payload)
+    _atomic_write(directory / "latest.json", payload)
+    if keep > 0:
+        prune_snapshots(directory, keep)
     return path
 
 
@@ -44,13 +75,34 @@ def list_snapshots(directory: Path | str) -> list[Path]:
     return sorted(Path(directory).glob("snapshot-*.json"))
 
 
-def latest_snapshot(directory: Path | str) -> Snapshot | None:
-    """Load the most recent snapshot, or ``None`` if there are none."""
+def prune_snapshots(directory: Path | str, keep: int) -> list[Path]:
+    """Delete all but the newest ``keep`` timestamped snapshots; return removed."""
+    if keep <= 0:
+        return []
     files = list_snapshots(directory)
-    return load_snapshot(files[-1]) if files else None
+    removed: list[Path] = []
+    for old in files[:-keep]:
+        old.unlink(missing_ok=True)
+        removed.append(old)
+    return removed
+
+
+def _load_valid_newest_first(directory: Path | str) -> Iterator[Snapshot]:
+    """Yield loadable snapshots newest-first, skipping any that fail to parse."""
+    for path in reversed(list_snapshots(directory)):
+        try:
+            yield load_snapshot(path)
+        except (OSError, ValueError) as exc:
+            logger.warning("skipping unreadable snapshot %s: %s", path, exc)
+
+
+def latest_snapshot(directory: Path | str) -> Snapshot | None:
+    """Load the most recent valid snapshot, or ``None`` if there are none."""
+    return next(_load_valid_newest_first(directory), None)
 
 
 def previous_snapshot(directory: Path | str) -> Snapshot | None:
-    """Load the second-most-recent snapshot, or ``None``."""
-    files = list_snapshots(directory)
-    return load_snapshot(files[-2]) if len(files) >= 2 else None
+    """Load the second-most-recent valid snapshot, or ``None``."""
+    gen = _load_valid_newest_first(directory)
+    next(gen, None)
+    return next(gen, None)
