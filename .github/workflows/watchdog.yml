@@ -1,0 +1,67 @@
+# Scheduled scrape of RTK funding calls -> diff -> export (json/toon/csv/rss) ->
+# static site -> commit refreshed snapshots -> deploy site to GitHub Pages.
+name: watchdog
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # daily at 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-watchdog
+  cancel-in-progress: false
+
+jobs:
+  scrape-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv (+ cache)
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Run watchdog (scrape, diff, export, build site)
+        run: uv run rtk-watch run --out site
+
+      - name: Commit refreshed snapshots (if changed)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/snapshots
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "chore(data): refresh RTK funding calls [skip ci]"
+            git push
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: scrape-build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
