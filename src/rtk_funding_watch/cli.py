@@ -34,6 +34,7 @@ console = Console()
 
 DEFAULT_DATA_DIR = Path("data/snapshots")
 DEFAULT_SITE_DIR = Path("site")
+DEFAULT_KEEP = 90  # snapshots to retain; bounds unbounded growth under a cron
 
 
 def _setup_logging(verbose: bool) -> None:
@@ -77,6 +78,16 @@ def _print_summary(snapshot: Snapshot) -> None:
     console.print(table)
 
 
+def _guard_nonempty(snapshot: Snapshot) -> None:
+    """Refuse to persist an empty scrape (listing markup likely changed)."""
+    if not snapshot.calls:
+        console.print(
+            "[red]Scrape returned 0 calls; refusing to save. The rtk.ee listing "
+            "markup may have changed.[/]"
+        )
+        raise typer.Exit(code=2)
+
+
 def _write_api_files(
     snapshot: Snapshot, diff: Diff | None, out_dir: Path
 ) -> list[Path]:
@@ -98,11 +109,15 @@ def scrape_cmd(
     listing_url: Annotated[
         str | None, typer.Option("--listing-url", help="Override the listing URL.")
     ] = None,
+    keep: Annotated[
+        int, typer.Option("--keep", help="Snapshots to retain (0 = unlimited).")
+    ] = DEFAULT_KEEP,
 ) -> None:
     """Scrape the RTK listing and save a timestamped snapshot."""
     cfg = ScraperConfig(listing_url=listing_url) if listing_url else ScraperConfig()
     snapshot = scrape(cfg)
-    path = storage.save_snapshot(snapshot, data_dir)
+    _guard_nonempty(snapshot)
+    path = storage.save_snapshot(snapshot, data_dir, keep=keep)
     console.print(f"[green]Saved snapshot[/] {path} ({len(snapshot.calls)} calls)")
     _print_summary(snapshot)
 
@@ -165,6 +180,7 @@ def run(
     out_dir: Annotated[Path, typer.Option("--out")] = DEFAULT_SITE_DIR,
     data_dir: Annotated[Path, typer.Option("--data-dir")] = DEFAULT_DATA_DIR,
     listing_url: Annotated[str | None, typer.Option("--listing-url")] = None,
+    keep: Annotated[int, typer.Option("--keep")] = DEFAULT_KEEP,
 ) -> None:
     """Full watchdog pipeline: scrape, diff, export and render the site."""
     from rtk_funding_watch import site  # noqa: PLC0415 (lazy: optional heavy import)
@@ -172,7 +188,8 @@ def run(
     cfg = ScraperConfig(listing_url=listing_url) if listing_url else ScraperConfig()
     previous = storage.latest_snapshot(data_dir)
     snapshot = scrape(cfg)
-    storage.save_snapshot(snapshot, data_dir)
+    _guard_nonempty(snapshot)
+    storage.save_snapshot(snapshot, data_dir, keep=keep)
     changes = diff_snapshots(previous, snapshot)
     _write_api_files(snapshot, changes, out_dir)
     site.build_site(snapshot, changes, out_dir)
