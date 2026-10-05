@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ project_name }}</title>
+    <meta name="description" content="{{ tagline }}" />
+    <meta name="generator" content="{{ generator }}" />
+    <link rel="stylesheet" href="./static/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <h1>{{ project_name }}</h1>
+        <p class="tagline">{{ tagline }}</p>
+        <p class="meta">
+          Source:
+          <a href="{{ source_url }}" rel="noreferrer">rtk.ee funding rounds</a>
+          &middot; last scraped
+          <time datetime="{{ scraped_at_iso }}">{{ scraped_at_human }}</time>
+          &middot; {{ counts.total }} call{{ "" if counts.total == 1 else "s" }}
+        </p>
+
+        <nav class="endpoints" aria-label="Machine-readable endpoints">
+          <span class="label">Data:</span>
+          {% for ep in endpoints %}
+          <a class="endpoint" href="{{ ep.href }}">{{ ep.label }}</a>
+          {% endfor %}
+        </nav>
+
+        <p class="mcp-note">
+          An MCP server is also available for AI assistants &mdash; run
+          <code>{{ mcp_command }}</code> to serve the calls over the Model
+          Context Protocol.
+        </p>
+      </div>
+    </header>
+
+    <main class="wrap">
+      {% if changes %}
+      <section aria-labelledby="changes-heading">
+        <h2 id="changes-heading">Recent changes</h2>
+        <ul class="changes">
+          {% for ch in changes %}
+          <li class="change">
+            <span class="badge badge-{{ ch.type }}">{{ ch.type_label }}</span>
+            {% if ch.detail_url %}
+            <a class="change-name" href="{{ ch.detail_url }}" rel="noreferrer"
+              >{{ ch.name }}</a
+            >
+            {% else %}
+            <span class="change-name">{{ ch.name }}</span>
+            {% endif %}
+            {% if ch.detail_text %}
+            <span class="change-detail">{{ ch.detail_text }}</span>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+
+      <section aria-labelledby="calls-heading">
+        <h2 id="calls-heading">Funding calls</h2>
+
+        <div class="controls">
+          <div class="search">
+            <label class="label" for="search">Search calls</label>
+            <input
+              type="search"
+              id="search"
+              placeholder="Search by name, purpose, domain&hellip;"
+              autocomplete="off"
+            />
+          </div>
+          <fieldset class="filters">
+            <legend>Filter by status</legend>
+            {% for st in statuses %}
+            <label class="filter-toggle">
+              <input type="checkbox" value="{{ st.value }}" checked />
+              <span class="badge badge-{{ st.value }}">{{ st.label }}</span>
+              <span aria-hidden="true">({{ st.count }})</span>
+            </label>
+            {% endfor %}
+          </fieldset>
+        </div>
+
+        <p class="result-count" id="result-count" role="status" aria-live="polite">
+          {{ counts.total }} call{{ "" if counts.total == 1 else "s" }} shown
+        </p>
+
+        <p class="empty" id="empty-state" hidden>
+          No calls match your search and filters.
+        </p>
+
+        <ul class="calls">
+          {% for call in calls %}
+          <li
+            class="call"
+            data-status="{{ call.status }}"
+            data-text="{{ call.search_text }}"
+          >
+            <article>
+              <div class="call-head">
+                <h3>
+                  {% if call.detail_url %}
+                  <a href="{{ call.detail_url }}" rel="noreferrer"
+                    >{{ call.name }}</a
+                  >
+                  {% else %}{{ call.name }}{% endif %}
+                </h3>
+                <span class="badge badge-{{ call.status }}"
+                  >{{ call.status_label }}</span
+                >
+              </div>
+
+              <dl class="call-dl">
+                {% if call.window %}
+                <dt>Application</dt>
+                <dd>
+                  {{ call.window }}{% if call.deadline_note %} &middot;
+                  {{ call.deadline_note }}{% endif %}
+                </dd>
+                {% endif %} {% if call.field_domain %}
+                <dt>Domain</dt>
+                <dd>{{ call.field_domain }}</dd>
+                {% endif %} {% if call.funding_source %}
+                <dt>Funding</dt>
+                <dd>{{ call.funding_source }}</dd>
+                {% endif %} {% if call.target_group %}
+                <dt>Target group</dt>
+                <dd>{{ call.target_group }}</dd>
+                {% endif %} {% if call.purpose %}
+                <dt>Purpose</dt>
+                <dd>{{ call.purpose }}</dd>
+                {% endif %}
+              </dl>
+
+              {% set has_res = call.regulations or call.documents or call.images %}
+              {% if has_res %}
+              <div class="resources">
+                {% if call.regulations %}
+                <details>
+                  <summary>Riigi Teataja ({{ call.regulations | length }})</summary>
+                  <ul>
+                    {% for url in call.regulations %}
+                    <li><a href="{{ url }}" rel="noreferrer">{{ url }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </details>
+                {% endif %} {% if call.documents %}
+                <details>
+                  <summary>Documents ({{ call.documents | length }})</summary>
+                  <ul>
+                    {% for url in call.documents %}
+                    <li><a href="{{ url }}" rel="noreferrer">{{ url }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </details>
+                {% endif %} {% if call.images %}
+                <details>
+                  <summary>Images ({{ call.images | length }})</summary>
+                  <ul>
+                    {% for url in call.images %}
+                    <li><a href="{{ url }}" rel="noreferrer">{{ url }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </details>
+                {% endif %}
+              </div>
+              {% endif %}
+            </article>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      {% if common_resources %}
+      <section aria-labelledby="common-heading">
+        <h2 id="common-heading">Common resources</h2>
+        <div class="resources">
+          <details open>
+            <summary>Site-wide documents ({{ common_resources | length }})</summary>
+            <ul>
+              {% for url in common_resources %}
+              <li><a href="{{ url }}" rel="noreferrer">{{ url }}</a></li>
+              {% endfor %}
+            </ul>
+          </details>
+        </div>
+      </section>
+      {% endif %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>
+          {{ project_name }} &middot; generated by
+          <code>{{ generator }}</code> &middot; data belongs to Riigi
+          Tugiteenuste Keskus. This is an unofficial, automated republication.
+        </p>
+      </div>
+    </footer>
+
+    <script src="./static/app.js" defer></script>
+  </body>
+</html>
