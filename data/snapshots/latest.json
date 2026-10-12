@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-10-11T12:52:05.762140Z",
+  "scraped_at": "2026-10-12T15:27:49.557480Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -871,35 +871,6 @@
       ]
     },
     {
-      "id": "neet-noored-toetusmeede",
-      "name": "Lisa- ja jätkutegevused mittetöötavate noorte tööalase konkurentsivõime suurendamiseks ning nende haridusliku lõimumise ja ennetustegevuste toetamiseks",
-      "status": "closed",
-      "application_period": "alates 20.05.2026 kuni 31.08.2027 kell 17.00 või kuni eelarvevahendite ammendumiseni.",
-      "application_start": "2026-05-20",
-      "application_end": "2027-08-31",
-      "deadline_note": "kuni eelarvevahendite ammendumiseni (until budget is exhausted)",
-      "target_group": "taotlejaks võib olla juriidiline isik, valitsusasutus või selle hallatav riigiasutus, kohaliku omavalitsuse üksus või selle asutus, kes on varem saanud toetust käesoleva määruse § 4 lõike 1 punktis 1 nimetatud tegevuseks või olnud partner sama sätte alusel elluviidud tegevuses.",
-      "purpose": "parandada noorte tööalast konkurentsivõimet ja nad tööle aidata või haridussüsteemi lõimida.",
-      "field_domain": "sotsiaalkaitse ja tervis",
-      "funding_source": "",
-      "detail_url": "https://rtk.ee/NEET-noored-toetusmeede",
-      "source_host": "rtk.ee",
-      "regulation_urls": [
-        "https://www.riigiteataja.ee/akt/114102025006"
-      ],
-      "document_links": [
-        "https://pilv.rtk.ee/s/DNCAT7xbf2YnMPb",
-        "https://pilv.rtk.ee/s/faNWdy4LLaA92S3",
-        "https://pilv.rtk.ee/s/9PB2jXjQdFQgm4e",
-        "https://pilv.rtk.ee/s/FPzGGnkgjQdeqdM",
-        "https://pilv.rtk.ee/s/croQ8bH25PcBQNw",
-        "https://pilv.rtk.ee/s/KG6LNJzJHnWFQLb"
-      ],
-      "image_urls": [
-        "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
-      ]
-    },
-    {
       "id": "mittetootavad-vahemalt-55-aastased-tooalase-konkurentsivoime-suurendamine-toole-saamise-toetamine-19863f",
       "name": "Mittetöötavate, vähemalt 55-aastaste, isikute tööalase konkurentsivõime suurendamine",
       "status": "closed",
@@ -1653,6 +1624,35 @@
         "https://pilv.rtk.ee/s/Ds65xHwLKGgiGsY",
         "https://pilv.rtk.ee/s/rAb4j3nEHjydoWx",
         "https://pilv.rtk.ee/s/9fgz39bJrQWY9Xa"
+      ],
+      "image_urls": [
+        "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
+      ]
+    },
+    {
+      "id": "neet-noored-toetusmeede",
+      "name": "Lisa- ja jätkutegevused mittetöötavate noorte tööalase konkurentsivõime suurendamiseks ning nende haridusliku lõimumise ja ennetustegevuste toetamiseks",
+      "status": "open",
+      "application_period": "alates 20.05.2026 kuni 31.08.2027 kell 17.00 või kuni eelarvevahendite ammendumiseni.",
+      "application_start": "2026-05-20",
+      "application_end": "2027-08-31",
+      "deadline_note": "kuni eelarvevahendite ammendumiseni (until budget is exhausted)",
+      "target_group": "taotlejaks võib olla juriidiline isik, valitsusasutus või selle hallatav riigiasutus, kohaliku omavalitsuse üksus või selle asutus, kes on varem saanud toetust käesoleva määruse § 4 lõike 1 punktis 1 nimetatud tegevuseks või olnud partner sama sätte alusel elluviidud tegevuses.",
+      "purpose": "parandada noorte tööalast konkurentsivõimet ja nad tööle aidata või haridussüsteemi lõimida.",
+      "field_domain": "sotsiaalkaitse ja tervis",
+      "funding_source": "",
+      "detail_url": "https://rtk.ee/NEET-noored-toetusmeede",
+      "source_host": "rtk.ee",
+      "regulation_urls": [
+        "https://www.riigiteataja.ee/akt/114102025006"
+      ],
+      "document_links": [
+        "https://pilv.rtk.ee/s/DNCAT7xbf2YnMPb",
+        "https://pilv.rtk.ee/s/faNWdy4LLaA92S3",
+        "https://pilv.rtk.ee/s/9PB2jXjQdFQgm4e",
+        "https://pilv.rtk.ee/s/FPzGGnkgjQdeqdM",
+        "https://pilv.rtk.ee/s/croQ8bH25PcBQNw",
+        "https://pilv.rtk.ee/s/KG6LNJzJHnWFQLb"
       ],
       "image_urls": [
         "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
