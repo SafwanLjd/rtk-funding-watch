@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-10-13T14:13:35.851701Z",
+  "scraped_at": "2026-10-14T11:54:19.620757Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -1198,6 +1198,36 @@
       ]
     },
     {
+      "id": "suuremate-linnapiirkondade-arendamine-0",
+      "name": "Suuremate linnapiirkondade arendamine",
+      "status": "closed",
+      "application_period": "Alates 19.06.2026 on avatud ettepanekute esitamise lisavoor Ida- Virumaa linnapiirkondade digilahenduste projektide rahastamiseks.",
+      "application_start": "2026-06-19",
+      "application_end": null,
+      "deadline_note": "",
+      "target_group": "ettepanku esitajaks, taotlejaks ja partneriks võib olla: kohaliku omavalitsuse üksus, sihtasutus ja mittetulundusühing,avalik-õiguslik juriidiline isik, äriühing.",
+      "purpose": "",
+      "field_domain": "regionaalareng",
+      "funding_source": "",
+      "detail_url": "https://rtk.ee/suuremate-linnapiirkondade-arendamine-0",
+      "source_host": "rtk.ee",
+      "regulation_urls": [
+        "https://www.riigiteataja.ee/et/akt/110062026008?leiaKehtiv"
+      ],
+      "document_links": [
+        "https://pilv.rtk.ee/s/rJL6yoTwL8biMdb",
+        "https://pilv.rtk.ee/s/4xHSWZqRRwzrDjE",
+        "https://pilv.rtk.ee/s/4wLMsz4T4izqe7X",
+        "https://ivol.ee/wp-content/uploads/2025/12/Ida-Viru_maakonna_linnapiirkondade_arenguplaan_2023-2035.pdf",
+        "https://pilv.rtk.ee/s/3S9i9jHx525pt8G",
+        "https://pilv.rtk.ee/s/dzwoi9FT6tKKeCj",
+        "https://pilv.rtk.ee/s/QGgSAcXKewmFYeF"
+      ],
+      "image_urls": [
+        "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
+      ]
+    },
+    {
       "id": "teadusuuringute-moju-suurendamine-ning-teadusasutuste-ja-korgkoolide-institutsionaalse-teadmussiirde-suutlikkuse-toetamine-847e37",
       "name": "Teadusuuringute mõju suurendamine ning teadusasutuste ja kõrgkoolide institutsionaalse teadmussiirde suutlikkuse toetamine (Astra+)",
       "status": "closed",
@@ -1683,36 +1713,6 @@
       ],
       "image_urls": [
         "https://rtk.ee/sites/default/files/2024-01/regionaal-%20ja%20p%C3%B5llumajandusministeerium_reguonaalarengu%20toetuseks.png",
-        "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
-      ]
-    },
-    {
-      "id": "suuremate-linnapiirkondade-arendamine-0",
-      "name": "Suuremate linnapiirkondade arendamine",
-      "status": "open",
-      "application_period": "Alates 19.06.2026 on avatud ettepanekute esitamise lisavoor Ida- Virumaa linnapiirkondade digilahenduste projektide rahastamiseks.",
-      "application_start": "2026-06-19",
-      "application_end": null,
-      "deadline_note": "",
-      "target_group": "ettepanku esitajaks, taotlejaks ja partneriks võib olla: kohaliku omavalitsuse üksus, sihtasutus ja mittetulundusühing,avalik-õiguslik juriidiline isik, äriühing.",
-      "purpose": "",
-      "field_domain": "regionaalareng",
-      "funding_source": "",
-      "detail_url": "https://rtk.ee/suuremate-linnapiirkondade-arendamine-0",
-      "source_host": "rtk.ee",
-      "regulation_urls": [
-        "https://www.riigiteataja.ee/et/akt/110062026008?leiaKehtiv"
-      ],
-      "document_links": [
-        "https://pilv.rtk.ee/s/rJL6yoTwL8biMdb",
-        "https://pilv.rtk.ee/s/4xHSWZqRRwzrDjE",
-        "https://pilv.rtk.ee/s/4wLMsz4T4izqe7X",
-        "https://ivol.ee/wp-content/uploads/2025/12/Ida-Viru_maakonna_linnapiirkondade_arenguplaan_2023-2035.pdf",
-        "https://pilv.rtk.ee/s/3S9i9jHx525pt8G",
-        "https://pilv.rtk.ee/s/dzwoi9FT6tKKeCj",
-        "https://pilv.rtk.ee/s/QGgSAcXKewmFYeF"
-      ],
-      "image_urls": [
         "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
       ]
     },
