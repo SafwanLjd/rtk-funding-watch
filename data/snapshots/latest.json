@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-10-18T11:07:13.300205Z",
+  "scraped_at": "2026-10-19T13:18:13.655259Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -1751,6 +1751,34 @@
       "image_urls": [
         "https://www.rtk.ee/sites/default/files/2026-01/Untitled%20design%20%283%29.jpg",
         "https://www.rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
+      ]
+    },
+    {
+      "id": "kohaliku-omavalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-2026",
+      "name": "Kohaliku omavalitsuse hoonete energiatõhususe parandamine moderniseerimisfondist 2026",
+      "status": "upcoming",
+      "application_period": "avaneb oktoobris 2026",
+      "application_start": null,
+      "application_end": null,
+      "deadline_note": "",
+      "target_group": "kohaliku Kohaliku omavalitsuse üksus; kohaliku omavalitsuse üksuse valitseva mõju all olev valitsussektorisse kuuluv üksus; kohaliku omavalitsuse üksuste ühise valitseva mõju all olev valitsussektorisse kuuluv üksus.",
+      "purpose": "avaliku sektori hoonetesse tehtavate investeeringute kaudu energiatõhususe parandamine, kasvuhoonegaaside heite vähendamine, hoonesse tarnitud energia ja hoone ülalpidamiskulude vähendamine, hoone sisekliima nõuetega vastavusse viimine ning taastuvenergia kasutuse edendamine.",
+      "field_domain": "riigivalitsemine ja energeetika",
+      "funding_source": "",
+      "detail_url": "https://rtk.ee/kohaliku-omavalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-2026",
+      "source_host": "rtk.ee",
+      "regulation_urls": [
+        "https://www.riigiteataja.ee/et/akt/120102026002",
+        "https://www.riigiteataja.ee/aktilisa/1201/0202/6002/REM_12102026_m60_Lisa2.pdf#"
+      ],
+      "document_links": [
+        "https://pilv.rtk.ee/s/QHYQRR38q73E6Xd",
+        "https://pilv.rtk.ee/s/zAd9Ee7a34rwaKd"
+      ],
+      "image_urls": [
+        "https://rtk.ee/sites/default/files/2026-07/ET_cofundedbyttheMF_CMYK_POS.png",
+        "https://rtk.ee/sites/default/files/styles/opengraph/public/2025-03/dan-burton-HPsZwX44RiA-unsplash.jpg",
+        "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
       ]
     }
   ],
