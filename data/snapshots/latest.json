@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-10-25T11:32:07.513276Z",
+  "scraped_at": "2026-10-26T13:05:09.790857Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -53,12 +53,12 @@
       "detail_url": "https://www.rtk.ee/meede-atraktiivne-piirkondlik-ettevotlus-ja-elukeskkond",
       "source_host": "www.rtk.ee",
       "regulation_urls": [
-        "https://www.riigiteataja.ee/akt/117052022012?leiaKehtiv",
         "https://www.riigiteataja.ee/akt/106072023078?leiaKehtiv",
         "https://www.riigiteataja.ee/akt/105072023254#para11",
         "https://www.riigiteataja.ee/akt/121122022038?leiaKehtiv#:~:text=%C2%A0%202)%20kavandatud%20tulemuse%20saavutamiseks%20vajalike%20tegevuste%20alternatiivide%20anal%C3%BC%C3%BCs%20v%C3%B5i%20uuring%3B",
         "https://www.riigiteataja.ee/akt/121122022038?leiaKehtiv#:~:text=4)%20avaliku%20kasutamise%20kokkulepped%20%C3%A4ri%C3%BChingutele%20ja%20tulundusasutustele%20ning%20eraisikutele%20kuuluvatesse%20objektidesse%20investeeringu%20tegemise%20korral%3B",
-        "https://www.riigiteataja.ee/akt/121092022003"
+        "https://www.riigiteataja.ee/akt/121092022003",
+        "https://www.riigiteataja.ee/akt/117052022012?leiaKehtiv"
       ],
       "document_links": [
         "https://pilv.rtk.ee/s/SMYx7iaYcKoEES4",
@@ -67,6 +67,7 @@
         "https://pilv.rtk.ee/s/5JcFsjMFJqedZq2?path=%2FKaasrahastanud%20EL%20kaksiklogod%20EST",
         "https://pilv.rtk.ee/s/2amB8BpwpErNjEX",
         "https://pilv.rtk.ee/s/ia67xCqRxpGdxxT",
+        "https://pilv.rtk.ee/s/nfo6irM9jWSGfQe",
         "https://pilv.rtk.ee/s/R3Lo4qeQrnZkeCk",
         "https://pilv.rtk.ee/s/BpWXX6a264BgtWb",
         "https://pilv.rtk.ee/s/nEKeKJKKjTLfjXj",
@@ -1757,7 +1758,7 @@
       "id": "kohaliku-omavalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-2026",
       "name": "Kohaliku omavalitsuse hoonete energiatõhususe parandamine moderniseerimisfondist 2026",
       "status": "upcoming",
-      "application_period": "avaneb oktoobris 2026",
+      "application_period": "Taotlusvoor avatakse peale taotlusvooru vahendite eraldamist. Meetme määrus ja selle seletuskiri on avaldatud ning nende alusel saab taotluse ettevalmistamisega alustada.",
       "application_start": null,
       "application_end": null,
       "deadline_note": "",
