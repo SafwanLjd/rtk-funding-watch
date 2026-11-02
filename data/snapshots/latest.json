@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-11-01T13:26:12.908030Z",
+  "scraped_at": "2026-11-02T15:55:22.814403Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -1759,9 +1759,9 @@
       "id": "kohaliku-omavalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-2026",
       "name": "Kohaliku omavalitsuse hoonete energiatõhususe parandamine moderniseerimisfondist 2026",
       "status": "upcoming",
-      "application_period": "Taotlusvoor avatakse peale taotlusvooru vahendite eraldamist. Meetme määrus ja selle seletuskiri on avaldatud ning nende alusel saab taotluse ettevalmistamisega alustada.",
-      "application_start": null,
-      "application_end": null,
+      "application_period": "Alates 03.11.2026 - 10.02.2027, kell 16.00",
+      "application_start": "2026-11-03",
+      "application_end": "2027-02-10",
       "deadline_note": "",
       "target_group": "kohaliku Kohaliku omavalitsuse üksus; kohaliku omavalitsuse üksuse valitseva mõju all olev valitsussektorisse kuuluv üksus; kohaliku omavalitsuse üksuste ühise valitseva mõju all olev valitsussektorisse kuuluv üksus.",
       "purpose": "avaliku sektori hoonetesse tehtavate investeeringute kaudu energiatõhususe parandamine, kasvuhoonegaaside heite vähendamine, hoonesse tarnitud energia ja hoone ülalpidamiskulude vähendamine, hoone sisekliima nõuetega vastavusse viimine ning taastuvenergia kasutuse edendamine.",
