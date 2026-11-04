@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-11-03T14:16:52.202817Z",
+  "scraped_at": "2026-11-04T14:34:14.555550Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -1782,6 +1782,32 @@
       "image_urls": [
         "https://www.rtk.ee/sites/default/files/2026-01/Untitled%20design%20%283%29.jpg",
         "https://www.rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
+      ]
+    },
+    {
+      "id": "noorte-valikute-suunamine-inseneeria-ning-info-ja-kommunikatsioonitehnoloogia-valdkondades-atv2",
+      "name": "Noorte valikute suunamine inseneeria ning info- ja kommunikatsioonitehnoloogia valdkondades",
+      "status": "upcoming",
+      "application_period": "Alates 16.11.2026 kuni 06.01.2027 kell 17.00.",
+      "application_start": "2026-11-16",
+      "application_end": "2027-01-06",
+      "deadline_note": "",
+      "target_group": "​Toetust saavad taotleda üldhariduskoolid ja kooli pidajad. Projektis peab osalema vähemalt kaks üldhariduskooli ning kaasatud peab olema vähemalt üks ettevõtja või kutseõppeasutus.",
+      "purpose": "​​Toetuse eesmärk on suurendada põhikooli II kooliastme õpilaste huvi inseneeria ja IKT valdkondade vastu, pakkudes praktilisi ja õppekavaga seotud tehnoloogiaõppe võimalusi ning suurendades õpetajate valmisolekut neid edaspidi iseseisvalt rakendada.",
+      "field_domain": "Haridus",
+      "funding_source": "",
+      "detail_url": "https://rtk.ee/noorte-valikute-suunamine-inseneeria-ning-info-ja-kommunikatsioonitehnoloogia-valdkondades-ATV2",
+      "source_host": "rtk.ee",
+      "regulation_urls": [
+        "https://www.riigiteataja.ee/et/akt/102102026002"
+      ],
+      "document_links": [
+        "https://pilv.rtk.ee/s/ipEGW9NPdb2YraQ"
+      ],
+      "image_urls": [
+        "https://rtk.ee/sites/default/files/2025-03/Kaasrahastanud_EL.png",
+        "https://rtk.ee/sites/default/files/2026-11/Taotleja%20teekond%20veebilehele%20%287%29.png",
+        "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
       ]
     }
   ],
