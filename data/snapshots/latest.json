@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-11-12T15:17:09.777131Z",
+  "scraped_at": "2026-11-13T14:36:28.278597Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -1803,7 +1803,8 @@
         "https://www.riigiteataja.ee/et/akt/102102026002"
       ],
       "document_links": [
-        "https://pilv.rtk.ee/s/ipEGW9NPdb2YraQ"
+        "https://pilv.rtk.ee/s/ipEGW9NPdb2YraQ",
+        "https://pilv.rtk.ee/s/tfpZ9pj76NTZXTb"
       ],
       "image_urls": [
         "https://rtk.ee/sites/default/files/2025-03/Kaasrahastanud_EL.png",
