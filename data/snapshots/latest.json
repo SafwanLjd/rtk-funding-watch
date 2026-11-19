@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-11-18T15:40:47.342263Z",
+  "scraped_at": "2026-11-19T15:45:38.464502Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -1573,6 +1573,7 @@
       "image_urls": [
         "https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti%20ettev%C3%B5tluse%20arengutoetuse%20andmine%20%282021-2027%29.png",
         "https://rtk.ee/sites/default/files/2025-03/Kaasrahastanud_EL.png",
+        "https://rtk.ee/sites/default/files/content-files/images/Kuvat%C3%B5mmis%202026-11-19%20084803.jpg",
         "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
       ]
     },
