@@ -1,6 +1,6 @@
 {
   "source_url": "https://www.rtk.ee/toetused-taotlemine/taotlusvoorud/avatud-ja-suletud-taotlusvoorud",
-  "scraped_at": "2026-11-19T15:45:38.464502Z",
+  "scraped_at": "2026-11-20T15:28:25.986427Z",
   "generator": "rtk-funding-watch",
   "calls": [
     {
@@ -485,7 +485,7 @@
       ]
     },
     {
-      "id": "keskvalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-1-9e950f",
+      "id": "keskvalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-1",
       "name": "Keskvalitsuse hoonete energiatõhususe parandamine moderniseerimisfondist",
       "status": "closed",
       "application_period": "Alates 10.11.2025 - 12.02.2026 kell 16.00",
@@ -1574,35 +1574,6 @@
         "https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti%20ettev%C3%B5tluse%20arengutoetuse%20andmine%20%282021-2027%29.png",
         "https://rtk.ee/sites/default/files/2025-03/Kaasrahastanud_EL.png",
         "https://rtk.ee/sites/default/files/content-files/images/Kuvat%C3%B5mmis%202026-11-19%20084803.jpg",
-        "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
-      ]
-    },
-    {
-      "id": "keskvalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-1-6c1044",
-      "name": "Keskvalitsuse hoonete energiatõhususe parandamine moderniseerimisfondist",
-      "status": "open",
-      "application_period": "alates 03.08.2026 kuni 18.11.2026 kell 16.00",
-      "application_start": "2026-08-03",
-      "application_end": "2026-11-18",
-      "deadline_note": "",
-      "target_group": "Toetuse taotlejaks võib olla hoone omanikuks olev keskvalitsuse valitseva mõju all olev juriidiline isik; riigile kuuluva hoone puhul riigivara valitseja.",
-      "purpose": "parandada keskvalitsuse kasutuses olevate hoonete energiatõhusust.",
-      "field_domain": "riigivalitsemine ja energeetika",
-      "funding_source": "",
-      "detail_url": "https://rtk.ee/keskvalitsuse-hoonete-energiatohususe-parandamine-moderniseerimisfondist-1",
-      "source_host": "rtk.ee",
-      "regulation_urls": [
-        "https://www.riigiteataja.ee/akt/109082022031?leiaKehtiv"
-      ],
-      "document_links": [
-        "https://pilv.rtk.ee/s/x6nxkqxzm8q3rE6",
-        "https://pilv.rtk.ee/s/wn7rYAAyecbD2QL",
-        "https://pilv.rtk.ee/s/mFpFHcnBJKNpZT2"
-      ],
-      "image_urls": [
-        "https://rtk.ee/sites/default/files/2026-07/ET_cofundedbyttheMF_CMYK_POS.png",
-        "https://rtk.ee/sites/default/files/2025-05/RTK_RM.png",
-        "https://rtk.ee/sites/default/files/2025-06/Kagu-Eesti%20piirkonna%20sotsiaalteenused%20ja%20kvaliteet.png",
         "https://rtk.ee/profiles/vp_distro/themes/vp_distro_theme/assets/static/images/otsinguplokk_vaikimisi_pilt.png"
       ]
     },
