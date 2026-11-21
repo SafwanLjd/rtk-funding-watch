@@ -35,6 +35,7 @@ All four share the same data model, defined in `src/rtk_funding_watch/models.py`
 | `regulation_urls` | array of string | Riigi Teataja legal-act URLs. |
 | `document_links` | array of string | Measure-specific document URLs (forms, guides, annexes). |
 | `image_urls` | array of string | Measure-specific content image URLs. |
+| `sections` | array of `CallSection` | The call page's own text, verbatim: an overview block (round notices, budget tables, side facts) headed `Ülevaade`, then one entry per accordion item under its title. Each entry has `heading` and `text`, with one line per paragraph, list item or table row. Empty when the page has no article body. |
 
 ### `Snapshot`
 
@@ -81,7 +82,11 @@ only).
       "source_host": "rtk.ee",
       "regulation_urls": ["https://www.riigiteataja.ee/akt/104102023013?leiaKehtiv"],
       "document_links": ["https://pilv.rtk.ee/s/J4BwGYG7g3ZTpnN"],
-      "image_urls": ["https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti.png"]
+      "image_urls": ["https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti.png"],
+      "sections": [
+        {"heading": "Ülevaade", "text": "Voorud suletakse vahendite lõppemisel või hiljemalt 31.12.2028.\nPS! Võru maakonna voor on suletud vahendite lõppemise tõttu!"},
+        {"heading": "Kui palju toetust saab?", "text": "Toetust saab 20 000 – 60 000 eurot.\nOmafinantseering on vähemalt 40%"}
+      ]
     }
   ],
   "common_resources": ["https://pilv.rtk.ee/s/commonGuide123"]
@@ -109,15 +114,16 @@ The document is a mapping with these top-level keys:
 The `calls` block declares the columns once in a header, then one row per call:
 
 ```
-calls[2]{id,name,status,application_period,application_start,application_end,deadline_note,target_group,purpose,field_domain,funding_source,detail_url,source_host,regulation_urls,document_links,image_urls}:
-  kagu-eesti-...,Kagu-Eesti ettevõtluse arengutoetuse andmine,open,alates 01.09.2025,2025-09-01,null,"","mikro- ja väikeettevõtjast...",...,regionaalareng,"",...,rtk.ee,"https://www.riigiteataja.ee/akt/104102023013?leiaKehtiv","https://pilv.rtk.ee/s/J4BwGYG7g3ZTpnN;https://pilv.rtk.ee/s/HfENAwa3X858etZ","https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti.png"
+calls[2]{id,name,status,application_period,application_start,application_end,deadline_note,target_group,purpose,field_domain,funding_source,detail_url,source_host,regulation_urls,document_links,image_urls,sections}:
+  kagu-eesti-...,Kagu-Eesti ettevõtluse arengutoetuse andmine,open,alates 01.09.2025,2025-09-01,null,"","mikro- ja väikeettevõtjast...",...,regionaalareng,"",...,rtk.ee,"https://www.riigiteataja.ee/akt/104102023013?leiaKehtiv","https://pilv.rtk.ee/s/J4BwGYG7g3ZTpnN;https://pilv.rtk.ee/s/HfENAwa3X858etZ","https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti.png","Ülevaade: Voorud suletakse ..."
 ```
 
 `calls[2]{...}` means a 2-row table with the listed columns. A tabular block
 requires every column to be primitive, so the three URL-list fields
 (`regulation_urls`, `document_links`, `image_urls`) are flattened to single
-`;`-joined strings. The JSON output keeps them as real arrays for lossless
-consumption. Use JSON when you need to split the URLs back out.
+`;`-joined strings, and `sections` to one string of `heading: text` blocks
+separated by blank lines. The JSON output keeps them as real arrays for lossless
+consumption. Use JSON when you need to split them back out.
 
 ## CSV: `calls.csv`
 
@@ -146,7 +152,8 @@ image_urls
 ```
 
 As in TOON, the three URL-list columns are `;`-joined strings. Empty dates and
-empty strings are written as empty cells.
+empty strings are written as empty cells. The page text (`sections`) is not in
+the CSV; use JSON or TOON for it.
 
 ## RSS: `calls`' change feed, `feed.xml`
 
@@ -197,11 +204,15 @@ order: the `RTK_SNAPSHOT` environment variable, then `data/snapshots/latest.json
 
 | Tool | Arguments | Returns |
 | --- | --- | --- |
-| `list_funding_calls` | `status` (optional: `open`, `upcoming`, or `closed`) | The matching `FundingCall` objects. With no status, every call. |
-| `get_funding_call` | `call_id` (string) | The single `FundingCall` with that `id`, or a not-found message. |
-| `search_funding_calls` | `query` (string), `status` (optional) | The `FundingCall` objects whose name, purpose, target group or field contain the query (case-insensitive). |
+| `list_funding_calls` | `status` (optional: `open`, `upcoming`, or `closed`) | A compact summary of each matching call. With no status, every call. |
+| `get_funding_call` | `call_id` (string) | The full `FundingCall` with that `id`, including `sections`, or a not-found message. |
+| `search_funding_calls` | `query` (string), `status` (optional) | A compact summary of each call whose id, name, purpose, target group, field or page text (`sections`) contains the query (case-insensitive). |
 
-Returned calls use the same field shape as the JSON format above.
+A compact summary carries `id`, `name`, `status`, `application_period`,
+`application_start`, `application_end`, `deadline_note`, `target_group`,
+`field_domain` and `detail_url`, so a list or search stays small; an agent then
+calls `get_funding_call` for the one record it needs. Full records use the same
+field shape as the JSON format above.
 
 ### Resources
 

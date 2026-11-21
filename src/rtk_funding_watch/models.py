@@ -15,6 +15,7 @@ from enum import StrEnum
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 __all__ = [
+    "CallSection",
     "ChangeEvent",
     "ChangeType",
     "Diff",
@@ -44,6 +45,15 @@ _HASHED_FIELDS = (
     "field_domain",
     "funding_source",
 )
+
+
+class CallSection(BaseModel):
+    """One block of a call page's own text: a heading and its verbatim text."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    heading: str = ""
+    text: str = ""
 
 
 class FundingCall(BaseModel):
@@ -92,6 +102,13 @@ class FundingCall(BaseModel):
     )
     image_urls: list[str] = Field(
         default_factory=list, description="Measure-specific content image URLs."
+    )
+    sections: list[CallSection] = Field(
+        default_factory=list,
+        description=(
+            "The call page's own text, verbatim: an overview block (round notices, "
+            "budget tables, side facts), then one section per accordion item."
+        ),
     )
 
     def content_hash(self) -> str:

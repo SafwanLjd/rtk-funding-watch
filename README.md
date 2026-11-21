@@ -112,7 +112,11 @@ The full snapshot, serialized by Pydantic. Lists stay as real arrays.
       "detail_url": "https://rtk.ee/kagu-eesti-ettevotluse-...",
       "regulation_urls": ["https://www.riigiteataja.ee/akt/104102023013?leiaKehtiv"],
       "document_links": ["https://pilv.rtk.ee/s/J4BwGYG7g3ZTpnN"],
-      "image_urls": ["https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti.png"]
+      "image_urls": ["https://rtk.ee/sites/default/files/2025-08/Kagu-Eesti.png"],
+      "sections": [
+        {"heading": "Ülevaade", "text": "Voorud suletakse vahendite lõppemisel või hiljemalt 31.12.2028. ..."},
+        {"heading": "Kui palju toetust saab?", "text": "Toetust saab 20 000 – 60 000 eurot.\nOmafinantseering on vähemalt 40%"}
+      ]
     }
   ],
   "common_resources": ["https://pilv.rtk.ee/s/commonGuide123"]
@@ -124,8 +128,9 @@ The full snapshot, serialized by Pydantic. Lists stay as real arrays.
 [TOON](https://github.com/toon-format/toon) (Token-Oriented Object Notation)
 renders the uniform `calls` array as one tabular block, which is cheaper to feed
 to an LLM than JSON. The header lists the columns once; each call is one row.
-The three URL-list fields are flattened to `;`-joined strings so the table stays
-tabular (JSON keeps them as arrays).
+The three URL-list fields are flattened to `;`-joined strings, and `sections` (the
+call page's own text) to `heading: text` blocks, so the table stays tabular (JSON
+keeps them as arrays).
 
 ```
 scraped_at: "2026-10-05T12:00:00+00:00"
@@ -150,7 +155,8 @@ deadline_note, target_group, purpose, field_domain, funding_source,
 detail_url, source_host, regulation_urls, document_links, image_urls
 ```
 
-The three URL-list columns are `;`-joined, matching the TOON flattening.
+The three URL-list columns are `;`-joined, matching the TOON flattening. The page
+text (`sections`) is left out of the CSV; use JSON or TOON for it.
 
 ### RSS: `api/feed.xml`
 
@@ -196,7 +202,9 @@ config):
 ```
 
 The server exposes three tools: `list_funding_calls` (optionally filtered by
-status), `get_funding_call` by id, and `search_funding_calls` by text. It also exposes two
+status), `get_funding_call` by id, and `search_funding_calls` by text, which also
+matches each call page's own text. List and search return compact summaries;
+`get_funding_call` returns the full record, including `sections`. It also exposes two
 resources: `rtk://calls` (all calls as JSON) and `rtk://calls/{call_id}` (one
 call). Argument and return shapes are documented in
 [docs/formats.md](docs/formats.md#mcp-server).

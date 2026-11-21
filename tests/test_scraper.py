@@ -9,6 +9,7 @@ import respx
 
 from rtk_funding_watch.models import Status
 from rtk_funding_watch.scraper import (
+    OVERVIEW_HEADING,
     ScraperConfig,
     _clean,
     _dedupe_ids,
@@ -16,6 +17,7 @@ from rtk_funding_watch.scraper import (
     parse_detail,
     parse_listing,
     parse_period,
+    parse_sections,
     scrape,
 )
 from tests.factories import make_call
@@ -161,3 +163,44 @@ def test_scrape_end_to_end_mocked(listing_html: str, detail_html: str) -> None:
     ]
     assert any("pilv.rtk.ee" in u for u in by_id["alpha-meede"].document_links)
     assert snap.scraped_at == dt.datetime(2026, 10, 5, tzinfo=dt.UTC)
+
+
+_SECTIONS_HTML = """
+<html><body><nav>Menüü</nav>
+<article class="node node--view-mode-full">
+  <div class="paragraph paragraph--type--text-section">
+    <p>Voorud suletakse vahendite lõppemisel või hiljemalt 31.12.2028.</p>
+    <h2>PS! Võru maakonna voor on suletud!</h2>
+    <table><tr><td>Põlva</td><td>301 430,44</td></tr></table>
+  </div>
+  <div class="paragraph paragraph--type--accordion">
+    <a class="btn">Ava kõik</a>
+    <div class="card">
+      <div class="field--name-field-accordion-item-title">
+        <a>Kui palju toetust saab?</a>
+      </div>
+      <div class="collapse"><ul><li>Toetust saab 20 000 - 60 000 eurot.</li>
+      <li>Omafinantseering on <strong>vähemalt</strong> 40%</li></ul></div>
+    </div>
+  </div>
+  <div class="modal"><p>Kontaktisik: Eriala</p></div>
+</article></body></html>
+"""
+
+
+def test_parse_sections_keeps_page_text_by_heading() -> None:
+    sections = parse_sections(_SECTIONS_HTML)
+    headings = [s.heading for s in sections]
+    assert headings == [OVERVIEW_HEADING, "Kui palju toetust saab?"]
+    overview, amounts = sections[0].text, sections[1].text
+    assert "PS! Võru maakonna voor on suletud!" in overview.splitlines()
+    assert "Põlva | 301 430,44" in overview
+    assert "Ava kõik" not in overview and "Kontaktisik" not in overview
+    assert amounts.splitlines() == [
+        "Toetust saab 20 000 - 60 000 eurot.",
+        "Omafinantseering on vähemalt 40%",
+    ]
+
+
+def test_parse_sections_without_article_is_empty() -> None:
+    assert parse_sections("<html><body><p>Muu leht</p></body></html>") == []

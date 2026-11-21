@@ -22,6 +22,9 @@ def _flatten(call: FundingCall) -> dict[str, Any]:
     row = call.model_dump(mode="json")
     for field in _LIST_FIELDS:
         row[field] = ";".join(row[field])
+    row["sections"] = "\n\n".join(
+        f"{s['heading']}: {s['text']}" for s in row["sections"]
+    )
     return row
 
 

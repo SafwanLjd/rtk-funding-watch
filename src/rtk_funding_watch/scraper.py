@@ -20,7 +20,7 @@ import httpx
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from .models import FundingCall, Snapshot, Status
+from .models import CallSection, FundingCall, Snapshot, Status
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +57,26 @@ _IMG_CHROME_RE = re.compile(
 # Control chars that are illegal in XML 1.0 (so one bad field cannot break the feed).
 _ILLEGAL_CTRL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 _ALLOWED_SCHEMES = {"http", "https"}
+# Block-level tags that end a line when a page block is flattened to text.
+_BLOCK_TAGS = (
+    "p",
+    "li",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "div",
+    "ul",
+    "ol",
+    "table",
+    "blockquote",
+)
+_SPACE_BEFORE_PUNCT_RE = re.compile(r"\s+([.,;:!?)])")
+# Page parts that are not the call's own text: contact pop-ups and page chrome.
+_NON_CONTENT = ".modal, script, style, noscript, svg, iframe, form, nav, button"
+OVERVIEW_HEADING = "Ülevaade"
 _ALLOWED_HOST_SUFFIX = "rtk.ee"
 
 
@@ -120,7 +140,7 @@ def parse_period(text: str) -> tuple[dt.date | None, dt.date | None, str]:
 
 
 def _clean(text: str) -> str:
-    text = _ILLEGAL_CTRL_RE.sub("", text)
+    text = _ILLEGAL_CTRL_RE.sub("", text).replace("\u200b", "").replace("\ufeff", "")
     return " ".join(text.replace("\xa0", " ").split()).strip()
 
 
@@ -261,6 +281,55 @@ def parse_detail(html: str, base_url: str) -> dict[str, list[str]]:
     }
 
 
+def _block_text(el: Tag) -> str:
+    """Flatten a page block to text: one line per paragraph, list item or table row."""
+    for br in el.find_all("br"):
+        br.replace_with("\n")
+    for tr in el.find_all("tr"):
+        cells = [_clean(c.get_text(" ")) for c in tr.find_all(["td", "th"])]
+        tr.replace_with(" | ".join(c for c in cells if c) + "\n")
+    for tag in el.find_all(_BLOCK_TAGS):
+        tag.append("\n")
+    lines: list[str] = []
+    for raw in el.get_text("").split("\n"):
+        line = _SPACE_BEFORE_PUNCT_RE.sub(r"\1", _clean(raw))
+        if line:
+            lines.append(line)
+    return "\n".join(lines)
+
+
+def parse_sections(html: str) -> list[CallSection]:
+    """Return the call page's own text as ordered, verbatim sections.
+
+    The first section holds the article's text blocks outside the accordion
+    (round notices such as a closed county round, budget tables, side facts);
+    each accordion item follows as its own section under its title. Contact
+    pop-ups, navigation and scripts are skipped. Returns ``[]`` when the page
+    has no article body, so a layout change degrades to the link-only record.
+    """
+    soup = BeautifulSoup(html, "lxml")
+    root = soup.select_one("article.node--view-mode-full")
+    if root is None:
+        return []
+    for el in root.select(_NON_CONTENT):
+        el.decompose()
+    items: list[CallSection] = []
+    for card in root.select(".paragraph--type--accordion .card"):
+        title = card.select_one(".field--name-field-accordion-item-title")
+        heading = _clean(title.get_text(" ")) if title is not None else ""
+        if title is not None:
+            title.decompose()
+        text = _block_text(card)
+        if heading or text:
+            items.append(CallSection(heading=heading, text=text))
+        card.decompose()
+    for acc in root.select(".paragraph--type--accordion"):
+        acc.decompose()
+    overview = _block_text(root)
+    head = [CallSection(heading=OVERVIEW_HEADING, text=overview)] if overview else []
+    return head + items
+
+
 def _fetch(client: httpx.Client, url: str, retries: int) -> str:
     last_exc: Exception | None = None
     for attempt in range(1, retries + 1):
@@ -350,24 +419,31 @@ def scrape(
             {c.detail_url for c in calls if _is_rtk_host(c.detail_url)}
         )
 
-        def load(url: str) -> tuple[str, dict[str, list[str]] | None]:
+        def load(
+            url: str,
+        ) -> tuple[str, dict[str, list[str]] | None, list[CallSection]]:
             try:
-                return url, parse_detail(_fetch(client, url, cfg.retries), url)
+                html = _fetch(client, url, cfg.retries)
+                return url, parse_detail(html, url), parse_sections(html)
             except Exception as exc:  # pragma: no cover - network timing
                 logger.warning("detail fetch failed for %s: %s", url, exc)
-                return url, None
+                return url, None, []
 
         details: dict[str, dict[str, list[str]]] = {}
+        page_sections: dict[str, list[CallSection]] = {}
         with ThreadPoolExecutor(max_workers=cfg.concurrency) as pool:
-            for url, data in pool.map(load, unique_urls):
+            for url, data, sections in pool.map(load, unique_urls):
                 if data is not None:
                     details[url] = data
+                    page_sections[url] = sections
 
     for call in calls:
         if data := details.get(call.detail_url):
             call.regulation_urls = data["regulations"]
             call.document_links = data["documents"]
             call.image_urls = data["images"]
+            sections = page_sections.get(call.detail_url, [])
+            call.sections = [s.model_copy() for s in sections]
 
     calls = _dedupe_ids(calls)
     common = _drop_boilerplate(calls, cfg)

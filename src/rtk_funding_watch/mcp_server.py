@@ -19,7 +19,7 @@ from typing import Any
 from mcp.server import MCPServer
 
 from rtk_funding_watch import storage
-from rtk_funding_watch.models import Snapshot
+from rtk_funding_watch.models import FundingCall, Snapshot
 
 __all__ = ["main", "mcp"]
 
@@ -45,6 +45,25 @@ class _State:
 
 
 _state = _State()
+
+# Fields a list or search hit carries; get_funding_call returns the full record.
+_SUMMARY_FIELDS = {
+    "id",
+    "name",
+    "status",
+    "application_period",
+    "application_start",
+    "application_end",
+    "deadline_note",
+    "target_group",
+    "field_domain",
+    "detail_url",
+}
+
+
+def _summary(call: FundingCall) -> JsonDict:
+    """A compact view of one call, small enough to return many at once."""
+    return call.model_dump(mode="json", include=_SUMMARY_FIELDS)
 
 
 def _resolve_path(snapshot_path: Path | None = None) -> Path:
@@ -76,10 +95,12 @@ def _get_snapshot() -> Snapshot | None:
 
 @mcp.tool()
 def list_funding_calls(status: str | None = None) -> list[JsonDict]:
-    """List all RTK funding calls, optionally filtered by status.
+    """List all RTK funding calls as compact summaries, optionally by status.
 
     Pass ``status`` as one of ``open``, ``upcoming`` or ``closed`` to filter;
-    omit it to return every call. Returns an empty list when no data is loaded.
+    omit it to return every call. Call ``get_funding_call`` with a hit's ``id``
+    for the full record, including the call page's own text. Returns an empty
+    list when no data is loaded.
     """
     snapshot = _get_snapshot()
     if snapshot is None:
@@ -88,14 +109,16 @@ def list_funding_calls(status: str | None = None) -> list[JsonDict]:
     if status is not None:
         wanted = status.lower()
         calls = [call for call in calls if call.status.value == wanted]
-    return [call.model_dump(mode="json") for call in calls]
+    return [_summary(call) for call in calls]
 
 
 @mcp.tool()
 def get_funding_call(call_id: str) -> JsonDict | str:
-    """Return one funding call by its id, or a not-found message.
+    """Return one funding call's full record by its id, or a not-found message.
 
-    ``call_id`` is the stable slug used throughout the dataset.
+    ``call_id`` is the stable slug used throughout the dataset. The record
+    includes ``sections``: the call page's own text, verbatim, with eligibility,
+    amounts, own contribution, round notices and exceptions.
     """
     snapshot = _get_snapshot()
     if snapshot is None:
@@ -110,9 +133,10 @@ def get_funding_call(call_id: str) -> JsonDict | str:
 def search_funding_calls(query: str, status: str | None = None) -> list[JsonDict]:
     """Search funding calls by a case-insensitive substring match.
 
-    Matches ``query`` against each call's name, purpose, target group and
-    field domain. Optionally restrict results to a ``status`` value (``open``,
-    ``upcoming`` or ``closed``).
+    Matches ``query`` against each call's id, name, purpose, target group,
+    field domain and page text, and returns compact summaries; call
+    ``get_funding_call`` for the full record. Optionally restrict results to a
+    ``status`` value (``open``, ``upcoming`` or ``closed``).
     """
     snapshot = _get_snapshot()
     if snapshot is None:
@@ -124,10 +148,17 @@ def search_funding_calls(query: str, status: str | None = None) -> list[JsonDict
         if wanted is not None and call.status.value != wanted:
             continue
         haystack = " ".join(
-            (call.name, call.purpose, call.target_group, call.field_domain)
+            (
+                call.id,
+                call.name,
+                call.purpose,
+                call.target_group,
+                call.field_domain,
+                *(f"{s.heading} {s.text}" for s in call.sections),
+            )
         ).lower()
         if needle in haystack:
-            results.append(call.model_dump(mode="json"))
+            results.append(_summary(call))
     return results
 
 
