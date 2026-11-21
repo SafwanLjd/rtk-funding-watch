@@ -204,3 +204,34 @@ def test_parse_sections_keeps_page_text_by_heading() -> None:
 
 def test_parse_sections_without_article_is_empty() -> None:
     assert parse_sections("<html><body><p>Muu leht</p></body></html>") == []
+
+
+def _listing(body: str) -> str:
+    return f'<html><body><a name="avatud_taotlusvoorud"></a>{body}</body></html>'
+
+
+def test_parse_listing_splits_a_list_shared_by_two_calls() -> None:
+    html = _listing(
+        '<a class="btn btn-secondary" href="/kriis">Kriisivalmidus</a>'
+        "<ul><li>Taotlemine: alates 15.04.2026 kuni 31.12.2026</li>"
+        "<li>Sihtgrupp: KOVid</li>"
+        "<li>Taotlemine: alates 30.03.2026 kuni 04.01.2027</li>"
+        "<li>Sihtgrupp: suured hooned</li></ul>"
+        '<a class="btn btn-secondary" href="/hooned">Suured hooned</a>'
+    )
+    first, second = parse_listing(html)
+    assert first.application_period == "alates 15.04.2026 kuni 31.12.2026"
+    assert first.target_group == "KOVid"
+    assert second.application_period == "alates 30.03.2026 kuni 04.01.2027"
+    assert second.target_group == "suured hooned"
+
+
+def test_parse_listing_joins_a_name_split_over_two_buttons() -> None:
+    html = _listing(
+        '<a class="btn btn-secondary" href="/meede">Mittetöötavate isikute</a>'
+        '<a class="btn btn-secondary" href="/meede">ning nende toetamine</a>'
+        "<ul><li>Taotlemine: alates 28.11.2025 - 16.02.2026</li></ul>"
+    )
+    (call,) = parse_listing(html)
+    assert call.name == "Mittetöötavate isikute ning nende toetamine"
+    assert call.application_period == "alates 28.11.2025 - 16.02.2026"

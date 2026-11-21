@@ -178,15 +178,50 @@ def _attr(el: Tag, name: str) -> str:
     return value or ""
 
 
-def _apply_li_fields(call: FundingCall, ul: Tag) -> None:
-    """Fill a call's text fields from the ``<li>`` items of its detail list."""
+def _li_groups(ul: Tag) -> list[list[str]]:
+    """Split a detail list's items into one group per call.
+
+    RTK sometimes renders two calls' details in a single list. A label that
+    repeats (a second "Taotlemine") starts the next call's group, so each call
+    keeps its own fields instead of the last one overwriting them.
+    """
+    groups: list[list[str]] = [[]]
+    seen: set[str] = set()
     for li in ul.find_all("li", recursive=False) or ul.find_all("li"):
         txt = _clean(li.get_text(" "))
+        low = txt.lower()
+        label = next((lab for lab in _FIELD_LABELS if low.startswith(lab)), None)
+        if label is not None and label in seen:
+            groups.append([])
+            seen = set()
+        if label is not None:
+            seen.add(label)
+        groups[-1].append(txt)
+    return [g for g in groups if g]
+
+
+def _apply_fields(call: FundingCall, items: list[str]) -> None:
+    """Fill a call's text fields from the items of its detail list."""
+    for txt in items:
         low = txt.lower()
         for label, attr in _FIELD_LABELS.items():
             if low.startswith(label):
                 setattr(call, attr, _clean(txt[len(label) :].lstrip(" :")))
                 break
+
+
+def _joins_split_name(pending: FundingCall | None, name: str, url: str) -> bool:
+    """Append ``name`` to ``pending`` if it continues a name split over buttons.
+
+    RTK sometimes splits one call's name over two buttons for the same page,
+    with no details between them; treat them as one call, not two.
+    """
+    if pending is None or pending.detail_url != url or pending.application_period:
+        return False
+    pending.name = f"{pending.name} {name}"
+    if not pending.funding_source and (m := _FUNDING_RE.search(name)):
+        pending.funding_source = m.group(1)
+    return True
 
 
 def parse_listing(html: str) -> list[FundingCall]:
@@ -195,6 +230,8 @@ def parse_listing(html: str) -> list[FundingCall]:
     calls: list[FundingCall] = []
     current: Status | None = None
     pending: FundingCall | None = None
+    # Detail groups found after the first one in a shared list, for the next calls.
+    leftover: list[list[str]] = []
 
     def flush() -> None:
         nonlocal pending
@@ -207,7 +244,9 @@ def parse_listing(html: str) -> list[FundingCall]:
             continue
         if el.name == "ul":
             if pending is not None and not pending.application_period:
-                _apply_li_fields(pending, el)
+                first, *rest = _li_groups(el) or [[]]
+                _apply_fields(pending, first)
+                leftover.extend(rest)
                 flush()
             continue
         # el is an <a>: a section marker or a measure button.
@@ -222,6 +261,8 @@ def parse_listing(html: str) -> list[FundingCall]:
         if not name or not href:
             continue
         detail_url = urljoin("https://rtk.ee/", href)
+        if _joins_split_name(pending, name, detail_url):
+            continue
         flush()  # finalize the previous measure before any skip
         if _safe_url(detail_url) is None or not _is_rtk_host(detail_url):
             continue  # drop foreign-scheme or off-site anchors
@@ -234,6 +275,8 @@ def parse_listing(html: str) -> list[FundingCall]:
             source_host=_host(detail_url),
             funding_source=fsrc,
         )
+        if leftover:
+            _apply_fields(pending, leftover.pop(0))
     flush()
 
     for call in calls:
